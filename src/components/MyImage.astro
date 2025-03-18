@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+
+interface Props {
+  imagePath: string;
+  classTo: string;
+  alt?: string; // Propriedade opcional para texto alternativo
+  [key: string]: any; // Permite quaisquer outras propriedades
+}
+
+const { imagePath, classTo, alt = "Imagem" } = Astro.props;
+
+// Importa dinamicamente a imagem com base no caminho fornecido
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/*.{jpeg,jpg,png,gif}"
+);
+
+if (!images[imagePath]) {
+  throw new Error(
+    `"${imagePath}" não existe em glob: "src/assets/*.{jpeg,jpg,png,gif}"`
+  );
+}
+---
+
+
+  <Image
+    src={images[imagePath]()}
+    alt={alt}
+    class={classTo}
+    {...Astro.props}
+  />
+
